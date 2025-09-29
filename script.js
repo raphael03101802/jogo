@@ -3,7 +3,7 @@ const tabuleiro = document.getElementById("tabuleiro");
 const turnoTexto = document.getElementById("turno-texto");
 const reiniciarButton = document.getElementById("reiniciar");
 
-const pecasIniciais = [
+let pecasIniciais = [
     ['t', 'c', 'b', 'q', 'k', 'b', 'c', 't'], // Linha 1 (Torre, Cavalo, Bispo, Rainha, Rei, Bispo, Cavalo, Torre)
     ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Linha 2 (Peões)
     ['.', '.', '.', '.', '.', '.', '.', '.'], // Linha 3
@@ -14,7 +14,12 @@ const pecasIniciais = [
     ['T', 'C', 'B', 'Q', 'K', 'B', 'C', 'T'], // Linha 8 (Torre, Cavalo, Bispo, Rainha, Rei, Bispo, Cavalo, Torre)
 ];
 
-// Representação do tabuleiro no DOM
+// Variáveis de controle
+let jogadorAtual = 'brancas';
+let casaSelecionada = null;
+let movimentosValidos = [];
+
+// Função para desenhar o tabuleiro e peças
 function desenharTabuleiro() {
     tabuleiro.innerHTML = ''; // Limpa o tabuleiro
     for (let linha = 0; linha < 8; linha++) {
@@ -42,14 +47,10 @@ function desenharTabuleiro() {
     }
 }
 
-// Lógica de controle de turno
-let jogadorAtual = 'brancas';
-let casaSelecionada = null;
-
 // Função de seleção de casa
 function selecionarCasa(linha, coluna, casa) {
     const pecaSelecionada = casa.querySelector('.peça');
-    
+
     // Se já houver uma casa selecionada, tente mover
     if (casaSelecionada) {
         if (validarMovimento(casaSelecionada.linha, casaSelecionada.coluna, linha, coluna)) {
@@ -57,26 +58,21 @@ function selecionarCasa(linha, coluna, casa) {
             trocarTurno();
         }
         casaSelecionada = null;
-    } else if (pecaSelecionada) {
+        movimentosValidos = [];
+    } else if (pecaSelecionada && pecaSelecionada.classList.contains(jogadorAtual === 'brancas' ? 'peça-branca' : 'peça-preta')) {
         // Seleciona a peça
-        casaSelecionada = { linha, coluna };
+        casaSelecionada.linha = linha;
+        casaSelecionada.coluna = coluna;
+        movimentosValidos = calcularMovimentosValidos(linha, coluna, pecaSelecionada.textContent);
+        marcarMovimentosValidos();
     }
 }
 
-// Função para mover a peça
-function moverPeca(l1, c1, l2, c2) {
-    const peca = pecasIniciais[l1][c1];
-    pecasIniciais[l1][c1] = '.';
-    pecasIniciais[l2][c2] = peca;
-    desenharTabuleiro();
-}
-
-// Função para validar o movimento (básico para teste)
+// Função para validar o movimento (apenas um exemplo básico)
 function validarMovimento(l1, c1, l2, c2) {
-    // Apenas exemplo de validação: não permite mover para a casa já ocupada pela mesma cor
     const peca = pecasIniciais[l1][c1];
     const destino = pecasIniciais[l2][c2];
-    
+
     if (destino !== '.') {
         const corDestino = destino === destino.toUpperCase() ? 'branca' : 'preta';
         const corPeca = peca === peca.toUpperCase() ? 'branca' : 'preta';
@@ -87,22 +83,39 @@ function validarMovimento(l1, c1, l2, c2) {
     return true;
 }
 
-// Troca o turno do jogador
+// Função para mover a peça
+function moverPeca(l1, c1, l2, c2) {
+    const peca = pecasIniciais[l1][c1];
+    pecasIniciais[l1][c1] = '.';
+    pecasIniciais[l2][c2] = peca;
+    desenharTabuleiro();
+}
+
+// Função de troca de turno
 function trocarTurno() {
     jogadorAtual = jogadorAtual === 'brancas' ? 'negras' : 'brancas';
     turnoTexto.textContent = jogadorAtual.charAt(0).toUpperCase() + jogadorAtual.slice(1);
 }
 
-// Função de reiniciar o jogo
-reiniciarButton.addEventListener('click', () => {
-    pecasIniciais.length = 0;
-    pecasIniciais.push(...JSON.parse(JSON.stringify(pecasIniciais)));
-    jogadorAtual = 'brancas';
-    turnoTexto.textContent = 'Brancas';
-    desenharTabuleiro();
-});
+// Função para calcular os movimentos válidos para uma peça (básico)
+function calcularMovimentosValidos(linha, coluna, peca) {
+    let movimentos = [];
+    if (peca.toLowerCase() === 'p') {
+        // Movimento do peão
+        if (peca === 'p' && linha < 7 && pecasIniciais[linha + 1][coluna] === '.') {
+            movimentos.push([linha + 1, coluna]);
+        } else if (peca === 'P' && linha > 0 && pecasIniciais[linha - 1][coluna] === '.') {
+            movimentos.push([linha - 1, coluna]);
+        }
+    }
+    // Outras peças podem ser implementadas de maneira similar
+    return movimentos;
+}
 
-// Inicializar o tabuleiro
-desenharTabuleiro();
+// Função para marcar os movimentos válidos no tabuleiro
+function marcarMovimentosValidos() {
+    // Limpar marcações anteriores
+    const casas = document.querySelectorAll('.casa');
+    casas.for
 
 
