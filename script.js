@@ -99,5 +99,10 @@ reiniciarButton.addEventListener('click', () => {
     pecasIniciais.push(...JSON.parse(JSON.stringify(pecasIniciais)));
     jogadorAtual = 'brancas';
     turnoTexto.textContent = 'Brancas';
-    desen
+    desenharTabuleiro();
+});
+
+// Inicializar o tabuleiro
+desenharTabuleiro();
+
 
