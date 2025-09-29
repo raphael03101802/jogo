@@ -22,6 +22,7 @@ h1 {
     margin: 0 auto;
     width: 480px;
     height: 480px;
+    border: 2px solid #333;
 }
 
 .casa {
@@ -54,4 +55,23 @@ h1 {
 
 .peça-preta {
     color: black;
+}
+
+#informacao {
+    margin-top: 20px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
 }
